@@ -3,6 +3,28 @@ import interior from "./assets/sprites/washinginterior.png";
 import frame from "./assets/sprites/washingframe.png";
 import sock from "./assets/sprites/sock.png";
 
+
+import bra from "./assets/sprites/bra.png";
+import glasses from "./assets/sprites/glasses.png";
+import gloves from "./assets/sprites/gloves.png";
+import invoice from "./assets/sprites/invoice.png";
+import jacket from "./assets/sprites/jacket.png";
+import keys from "./assets/sprites/keys.png";
+import papers from "./assets/sprites/papers.png";
+
+import phone from "./assets/sprites/phone.png";
+import scarf from "./assets/sprites/scarf.png";
+import shirt from "./assets/sprites/shirt.png";
+import skirt from "./assets/sprites/skirt.png";
+import underwear from "./assets/sprites/underwear.png";
+import usb from "./assets/sprites/usb.png";
+
+
+
+
+import jeans from "./assets/sprites/jeans.png";
+
+
 const config = {
   type: Phaser.AUTO,
   parent: "phaser-example",
@@ -39,6 +61,21 @@ function preload() {
   this.load.image("frame", frame);
   this.load.image("sock", sock);
 
+  this.load.image("bra", bra);
+  this.load.image("glasses", glasses);
+  this.load.image("gloves", gloves);
+  this.load.image("invoice", invoice);
+  this.load.image("jocket", jacket);
+  this.load.image("keys", keys);
+  this.load.image("papers", papers);
+  this.load.image("phone", phone);
+  this.load.image("scarf", scarf);
+  this.load.image("shirt", shirt);
+  this.load.image("skirt", skirt);
+  this.load.image("underwear", underwear);
+  this.load.image("usb", usb);
+
+  this.load.image("jeans", jeans);
 }
 
 function create() {
@@ -52,8 +89,21 @@ function create() {
     
 
     // Build the boundary
-    boundary = create_boundary(this.physics.add.staticGroup());
+    var boundary = create_boundary(this.physics.add.staticGroup());
     
+
+    // Build the other stuff
+    var stuff = this.physics.add.group();
+
+    stuff.create(400,200,"jeans").setScale(0.5);
+    
+    stuff.create(700,600,"bra").setScale(0.5);
+    stuff.create(400,800,"skirt").setScale(1);
+    stuff.create(800, 300,"underwear").setScale(0.5);
+    stuff.create(900,800,"usb").setScale(0.5);
+    stuff.create(700,100,"phone").setScale(0.5);
+ 
+
  
     // add player
     player = this.physics.add.sprite(600, 600, 'sock').setScale(0.5);
@@ -63,8 +113,60 @@ function create() {
 
     // colliders
     this.physics.add.collider(player, boundary);
+    this.physics.add.collider(stuff, boundary);
+
+    this.physics.add.collider(player, stuff);
+    this.physics.add.collider(stuff, stuff);
+    
+    // logic
+
+    this.physics.add.overlap(player, boundary, bounce, null, this);
+    this.physics.add.overlap(stuff, boundary, bounce, null, this);
+    //this.physics.add.overlap(stuff, player, bounce, null, this);
+
+    //this.physics.add.overlap(player, stuff, bounce, null, this);
+    
 
 }
+
+
+function bounce(obj1, obj2) {
+  spin(obj1, 1);
+  //spin(obj2);
+
+
+}
+
+// spin the object. 
+function spin(obj, multi=1) {
+  var slow_speed= multi* 160;
+  var high_speed= multi*320;
+
+  //bottom left
+  if (obj.x <= 600 && obj.y >= 600) {
+    obj.setVelocityX(-slow_speed);
+    obj.setVelocityY(-high_speed);
+  };
+
+//bottom right
+if (obj.x >= 600 && obj.y >= 600) {
+  obj.setVelocityX(-slow_speed);
+  obj.setVelocityY(-slow_speed);
+};
+
+//top left
+if (obj.x <= 600 && obj.y <= 600) {
+  obj.setVelocityX(high_speed);
+  obj.setVelocityY(slow_speed);
+};
+//top right
+if (obj.x >= 600 && obj.y <= 600) {
+  obj.setVelocityX(slow_speed);
+  obj.setVelocityY(high_speed);
+};
+
+}
+
 
 function update ()
 {
@@ -91,7 +193,7 @@ function update ()
 
   if (cursors.up.isDown && player.body.touching.down)
   {
-      player.setVelocityY(-330);
+      player.setVelocityY(-330*2);
   }
 }
 
