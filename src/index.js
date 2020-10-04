@@ -3,6 +3,9 @@ import {WashScene} from "./washScene";
 import {TitleScene} from "./titleScene";
 import {SeperatedScene} from "./seperatedScene";
 import {CreditScene} from "./creditsScene";
+import {LostScene} from "./lostScene";
+import {TogetherScene} from "./togetherScene";
+import {ForeverApartScene} from "./foreverApartScene";
 
 
 
@@ -24,7 +27,8 @@ const config = {
     width: 1200,
     height: 1200
   },
-  scene: [TitleScene, SeperatedScene, WashScene, CreditScene]
+  scene: [TitleScene, SeperatedScene, LostScene, WashScene, 
+            TogetherScene, ForeverApartScene, CreditScene]
 };
 
 const game = new Phaser.Game(config);

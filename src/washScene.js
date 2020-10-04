@@ -19,6 +19,7 @@ import skirt from "./assets/sprites/skirt.png";
 import underwear from "./assets/sprites/underwear.png";
 import usb from "./assets/sprites/usb.png";
 
+import washingloop from "./assets/audio/washingloop.mp3";
 
 var player;
 var stuff;
@@ -186,9 +187,11 @@ function create_boundary(boundary){
 
 export default class WashScene extends Phaser.Scene {
 
+    
     constructor () {
         
         super("WashScene");
+        this.audio_list = {};
     }
 
     preload ()
@@ -214,11 +217,16 @@ export default class WashScene extends Phaser.Scene {
         this.load.image("usb", usb);
       
         this.load.image("jeans", jeans);
+
+        this.load.audio('washingloop', washingloop);
+        this.sound.decodeAudio('key', washingloop);
     }
 
     create () 
     {
         //  Create the background with frame overlay
+        this.audio_list.washingloop = this.sound.add('washingloop', {loop: true});
+        this.audio_list.washingloop.play();
 
         bg = this.add.image(600,600, 'interior');
         bg.displayWidth=1000;
@@ -298,7 +306,9 @@ export default class WashScene extends Phaser.Scene {
               sockmate.setPosition(600,600);
             }
             if (! nextSceneTimerStarted) {
-                this.time.addEvent({ delay: 5000, callback: () => { this.scene.start('CreditScene'); }, 
+                this.time.addEvent({ delay: 5000, callback: () => { 
+                    this.audio_list.washingloop.stop();
+                    this.scene.start('TogetherScene'); }, 
               
                 callbackScope: this, loop: false });
                 nextSceneTimerStarted = true;
@@ -308,10 +318,11 @@ export default class WashScene extends Phaser.Scene {
           if (gameOver)
           { 
             if (score > 0) {
-              scoreText.setText('Your sock mate is forever trapped, \n You Lose!!');
+              scoreText.setText('Oh no! Wash cycle is over!');
+              this.audio_list.washingloop.stop();
             }
             if (! nextSceneTimerStarted) {
-                this.time.addEvent({ delay: 3000, callback: () => { this.scene.start('CreditScene'); }, 
+                this.time.addEvent({ delay: 3000, callback: () => { this.scene.start('ForeverApartScene'); }, 
               
                 callbackScope: this, loop: false });
                 nextSceneTimerStarted = true;
