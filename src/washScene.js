@@ -26,23 +26,7 @@ import arrow from "./assets/buttons/arrow.png";
 
 import washingloop from "./assets/audio/washingloop.mp3";
 
-var player;
-var stuff;
-var boundary;
-var cursors;
-var score = 10;
-var timedEvent;
-var timerText;
-var washCycleOver = false;
-var gameOver = false;
-var scoreText;
-var goal;
-var goal_destroyed = false;
-var sockmate;
-var bg;
-var fg;
-var nextSceneTimerStarted = false;
-var bubblesGroup;
+
 
 
 // Helper functions
@@ -92,24 +76,7 @@ function formatTime(seconds){
 }
 
 
-function add_score(player, goal) {
-    score -= 0.02;
-    scoreText.setText('Hover to unwind for: \n' + (Math.ceil(score)) + ' seconds!');
-    goal.rotation-=0.01;
-  
-  }
-  
-  function timerTick ()
-  {
-    if (!washCycleOver) {
-      this.initialTime -= 1; // One second
-      timerText.setText('Wash ends: '  + formatTime(this.initialTime));
-  
-      if (this.initialTime <= 0) {
-        washCycleOver = true;
-      }
-    }
-  }
+
   
   function apply_current(obj) {
     var slow_accel = 100;
@@ -198,6 +165,22 @@ export default class WashScene extends Phaser.Scene {
         
         super("WashScene");
         this.audio_list = {};
+        this.player;
+        this.stuff;
+        this.boundary;
+        this.timerText;
+        this.scoreText;
+        this.goal;
+        this.sockmate;
+        this.bg;
+        this.fg;
+        this.nextSceneTimerStarted = false;
+        this.goal_destroyed = false;
+        this.washCycleOver = false;
+        this.gameOver = false;
+        this.score = 10;
+
+        this.bubblesGroup;
     }
 
     preload ()
@@ -235,61 +218,66 @@ export default class WashScene extends Phaser.Scene {
 
     create () 
     {
+
+        this.nextSceneTimerStarted = false;
+        this.goal_destroyed = false;
+        this.washCycleOver = false;
+        this.gameOver = false;
+        this.score = 10;
+
         //  Create the background with frame overlay
         this.audio_list.washingloop = this.sound.add('washingloop', {loop: true});
         this.audio_list.washingloop.play();
 
         this.cameras.main.setBackgroundColor('rgba(220, 220, 220, 1)');
 
-        bg = this.add.image(600,600, 'interior');
-        bg.displayWidth=1000;
-        bg.displayHeight=1000;
-        fg = this.add.image(600, 600, 'foreground');
-        fg.displayWidth=1100;
-        fg.displayHeight=1100;
+        this.bg = this.add.image(600,600, 'interior');
+        this.bg.displayWidth=1000;
+        this.bg.displayHeight=1000;
+        this.fg = this.add.image(600, 600, 'foreground');
+        this.fg.displayWidth=1100;
+        this.fg.displayHeight=1100;
 
         this.initialTime = 60;
 
 
-        scoreText = this.add.text(50,50, 'Unwind your sockmate!', 
+        this.scoreText = this.add.text(50,50, 'Unwind your sockmate!', 
                 { fontSize: '32px', fill: '#000' });
 
-        timerText = this.add.text(800, 50, 
+        this.timerText = this.add.text(800, 50, 
         'Wash ends: ' + formatTime(this.initialTime), 
                     { fontSize: '32px', fill: '#f00' });
 
-        goal = this.physics.add.staticImage(600,600, 'sock').setScale(0.3).refreshBody();
-        sockmate = this.physics.add.sprite(200, 200, 'sock')
+        this.goal = this.physics.add.staticImage(600,600, 'sock').setScale(0.3).refreshBody();
+        this.sockmate = this.physics.add.sprite(200, 200, 'sock')
                         .setScale(0.3)
                         .setBounce(0.7)
                         .disableBody(true, true);
 
 
         // Build the boundary
-        boundary = create_boundary(this.physics.add.staticGroup());
+        this.boundary = create_boundary(this.physics.add.staticGroup());
 
         // Add some bubbles
 
-        bubblesGroup = this.physics.add.group();
+        this.bubblesGroup = this.physics.add.group();
 
         [1,2,3,4,5,6].forEach((deets) => {
             var x_pos = Phaser.Math.Between(200,900);
             var y_pos = Phaser.Math.Between(200,900);
-            bubblesGroup.create(x_pos, y_pos, 'bubbles').setScale(0.3)
+            this.bubblesGroup.create(x_pos, y_pos, 'bubbles').setScale(0.3)
                 .setBounce(0.3, 0.3);
           });
         
 
         // Build the other stuff
-        stuff = create_stuff(this.physics.add.group());
+        this.stuff = create_stuff(this.physics.add.group());
 
 
         // add player
         var x_pos = Phaser.Math.Between(200,900);
         var y_pos = Phaser.Math.Between(800,900);
-        player = this.physics.add.sprite(x_pos, y_pos, 'sock').setScale(0.3).setBounce(0.7);
-
-        cursors = this.input.keyboard.createCursorKeys();
+        this.player = this.physics.add.sprite(x_pos, y_pos, 'sock').setScale(0.3).setBounce(0.7);
 
 
         // Frame ontop
@@ -298,32 +286,32 @@ export default class WashScene extends Phaser.Scene {
 
         // left and right arrows.
 
-        var left = this.add.image(150,1050, 'arrow').setScale(0.5);
+        this.left = this.add.image(150,1050, 'arrow').setScale(0.5);
         
-        var right = this.add.image(1050,1050, 'arrow').setScale(0.5);
-        right.flipX = true;
+        this.right = this.add.image(1050,1050, 'arrow').setScale(0.5);
+        this.right.flipX = true;
 
         // colliders
-        this.physics.add.collider(player, boundary);
-        this.physics.add.collider(stuff, boundary);
+        this.physics.add.collider(this.player, this.boundary);
+        this.physics.add.collider(this.stuff, this.boundary);
 
-        this.physics.add.collider(player, stuff);
-        this.physics.add.collider(stuff, stuff);
+        this.physics.add.collider(this.player, this.stuff);
+        this.physics.add.collider(this.stuff, this.stuff);
 
 
-        this.physics.add.collider(sockmate, stuff);
-        this.physics.add.collider(sockmate, player);
-        this.physics.add.collider(sockmate, boundary);
+        this.physics.add.collider(this.sockmate, this.stuff);
+        this.physics.add.collider(this.sockmate, this.player);
+        this.physics.add.collider(this.sockmate, this.boundary);
 
-        this.physics.add.collider(bubblesGroup, boundary);
-        this.physics.add.collider(bubblesGroup, bubblesGroup);
+        this.physics.add.collider(this.bubblesGroup, this.boundary);
+        this.physics.add.collider(this.bubblesGroup, this.bubblesGroup);
         
 
-        timedEvent = this.time.addEvent({ delay: 1000, callback: timerTick, callbackScope: this, loop: true });
+        this.timedEvent = this.time.addEvent({ delay: 1000, callback: this.timerTick, callbackScope: this, loop: true });
 
         // logic
 
-        this.physics.add.overlap(player, goal, add_score, null, this);
+        this.physics.add.overlap(this.player, this.goal, this.add_score, null, this);
 
 
 
@@ -331,68 +319,86 @@ export default class WashScene extends Phaser.Scene {
 
     update () {
 
-        if (washCycleOver) {
-            gameOver = true;
+        if (this.washCycleOver) {
+            this.gameOver = true;
           }
         
-          if (score <= 0) {
+          if (this.score <= 0) {
           
-            scoreText.setText('You freed your sock mate!');
-            if (!goal_destroyed) {      
-              goal.destroy();
-              goal_destroyed=true;
-              sockmate.enableBody(false, 600,600,true, true);    
-              sockmate.setPosition(600,600);
+            this.scoreText.setText('You freed your sock mate!');
+            if (!this.goal_destroyed) {      
+              this.goal.destroy();
+              this.goal_destroyed=true;
+              this.sockmate.enableBody(false, 600,600,true, true);    
+              this.sockmate.setPosition(600,600);
             }
-            if (! nextSceneTimerStarted) {
+            if (! this.nextSceneTimerStarted) {
                 this.time.addEvent({ delay: 5000, callback: () => { 
                     this.audio_list.washingloop.stop();
                     this.scene.start('TogetherScene'); }, 
               
                 callbackScope: this, loop: false });
-                nextSceneTimerStarted = true;
+                this.nextSceneTimerStarted = true;
             }
           }
         
-          if (gameOver)
+          if (this.gameOver)
           { 
-            if (score > 0) {
-              scoreText.setText('Oh no! Wash cycle is over!');
+            if (this.score > 0) {
+              this.scoreText.setText('Oh no! Wash cycle is over!');
               this.audio_list.washingloop.stop();
             }
-            if (! nextSceneTimerStarted) {
+            if (! this.nextSceneTimerStarted) {
                 this.time.addEvent({ delay: 3000, callback: () => { this.scene.start('ForeverApartScene'); }, 
               
                 callbackScope: this, loop: false });
-                nextSceneTimerStarted = true;
+                this.nextSceneTimerStarted = true;
             }
             return;
           }
         
-          stuff.children.entries.forEach( apply_current);
-          bubblesGroup.children.entries.forEach( apply_current);
+          this.stuff.children.entries.forEach( apply_current);
+          this.bubblesGroup.children.entries.forEach( apply_current);
         
-          apply_current(player);
+          apply_current(this.player);
           
 
-          bg.rotation += 0.01;
-          fg.rotation += 0.01;
+          this.bg.rotation += 0.01;
+          this.fg.rotation += 0.01;
           
           if (this.input.activePointer.isDown)
           {
             if (this.input.activePointer.position.x <= 600)
             {
-                player.setVelocityX(-160);
-                player.flipX = false;
+                this.player.setVelocityX(-160);
+                this.player.flipX = false;
             } else 
             {
-              player.setVelocityX(160);
-              player.flipX = true;
+              this.player.setVelocityX(160);
+              this.player.flipX = true;
             }
           }
         
     }
 
+    add_score(player, goal) {
+        this.score -= 0.02;
+        this.scoreText.setText('Hover to unwind for: \n' + (Math.ceil(this.score)) + ' seconds!');
+        this.goal.rotation-=0.01;
+      
+      }
+    
+    timerTick ()
+    {
+    if (!this.washCycleOver) {
+      this.initialTime -= 1; // One second
+      this.timerText.setText('Wash ends: '  + formatTime(this.initialTime));
+  
+      if (this.initialTime <= 0) {
+        this.washCycleOver = true;
+      }
+    }
+  }
 
 }
 
