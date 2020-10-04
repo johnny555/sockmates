@@ -33,7 +33,7 @@ var goal;
 var goal_destroyed = false;
 var sockmate;
 var bg;
-
+var nextSceneTimerStarted = false;
 
 
 // Helper functions
@@ -267,7 +267,6 @@ export default class WashScene extends Phaser.Scene {
 
         // logic
 
-
         this.physics.add.overlap(player, goal, add_score, null, this);
 
         //this.physics.add.overlap(stuff, goal, minus_score, null, this);
@@ -290,12 +289,24 @@ export default class WashScene extends Phaser.Scene {
               sockmate.enableBody(false, 600,600,true, true);    
               sockmate.setPosition(600,600);
             }
+            if (! nextSceneTimerStarted) {
+                this.time.addEvent({ delay: 5000, callback: () => { this.scene.start('CreditScene'); }, 
+              
+                callbackScope: this, loop: false });
+                nextSceneTimerStarted = true;
+            }
           }
         
           if (gameOver)
           { 
             if (score > 0) {
               scoreText.setText('Your sock mate is forever trapped, \n You Lose!!');
+            }
+            if (! nextSceneTimerStarted) {
+                this.time.addEvent({ delay: 3000, callback: () => { this.scene.start('CreditScene'); }, 
+              
+                callbackScope: this, loop: false });
+                nextSceneTimerStarted = true;
             }
             return;
           }

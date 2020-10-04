@@ -1,5 +1,9 @@
 import Phaser from "phaser";
 import {WashScene} from "./washScene";
+import {TitleScene} from "./titleScene";
+import {CreditScene} from "./creditsScene";
+
+
 
 const config = {
   type: Phaser.AUTO,
@@ -13,13 +17,14 @@ const config = {
         debug: false
     }
   },
+  /*
   scale: {
     mode: Phaser.Scale.RESIZE,
     parent: 'phaser-example',
     width: '100%',
     height: '100%'
-  },
-  scene: [WashScene]
+  },*/
+  scene: [TitleScene, WashScene, CreditScene]
 };
 
 const game = new Phaser.Game(config);
