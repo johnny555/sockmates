@@ -33,7 +33,7 @@ const config = {
   physics: {
     default: 'arcade',
     arcade: {
-        gravity: { y: 300 },
+        gravity: { y: 100 },
         debug: false
     }
   },
@@ -47,14 +47,13 @@ const config = {
 const game = new Phaser.Game(config);
 
 var player;
-var stars;
+var stuff;
 var bombs;
 var boundary;
 var cursors;
 var score = 0;
 var gameOver = false;
 var scoreText;
-
 
 function preload() {
   this.load.image("interior", interior);
@@ -65,7 +64,7 @@ function preload() {
   this.load.image("glasses", glasses);
   this.load.image("gloves", gloves);
   this.load.image("invoice", invoice);
-  this.load.image("jocket", jacket);
+  this.load.image("jacket", jacket);
   this.load.image("keys", keys);
   this.load.image("papers", papers);
   this.load.image("phone", phone);
@@ -76,6 +75,29 @@ function preload() {
   this.load.image("usb", usb);
 
   this.load.image("jeans", jeans);
+}
+
+function create_stuff(stuff) {
+
+  /*stuff.create(400,200,"jeans").setScale(0.5);
+    
+  stuff.create(700,600,"bra").setScale(0.5);
+  stuff.create(400,800,"skirt").setScale(1);
+  stuff.create(800, 300,"underwear").setScale(0.5);
+  stuff.create(900,800,"usb").setScale(0.5);
+  stuff.create(700,100,"phone").setScale(0.5);
+  */
+
+  var stuff_list = ['bra','glasses','gloves','invoice','jacket',
+                    'keys','papers','phone','scarf','shirt','skirt','underwear',
+                  'usb'];
+  stuff_list.forEach((name) => {
+    var x_pos = Phaser.Math.Between(200,900);
+    var y_pos = Phaser.Math.Between(200,900);
+    stuff.create(x_pos, y_pos, name).setScale(0.5);
+  });
+
+  return stuff;
 }
 
 function create() {
@@ -89,20 +111,11 @@ function create() {
     
 
     // Build the boundary
-    var boundary = create_boundary(this.physics.add.staticGroup());
+    boundary = create_boundary(this.physics.add.staticGroup());
     
 
     // Build the other stuff
-    var stuff = this.physics.add.group();
-
-    stuff.create(400,200,"jeans").setScale(0.5);
-    
-    stuff.create(700,600,"bra").setScale(0.5);
-    stuff.create(400,800,"skirt").setScale(1);
-    stuff.create(800, 300,"underwear").setScale(0.5);
-    stuff.create(900,800,"usb").setScale(0.5);
-    stuff.create(700,100,"phone").setScale(0.5);
- 
+    stuff = create_stuff(this.physics.add.group());
 
  
     // add player
@@ -167,9 +180,42 @@ if (obj.x >= 600 && obj.y <= 600) {
 
 }
 
+function apply_current(obj) {
+  var slow_accel = 100;
+  var high_accel = 1000;
+  
+  //bottom left
+  if (obj.x <= 600 && obj.y >= 600) {
+    obj.setAccelerationX(-slow_accel);
+    obj.setAccelerationY(-high_accel);
+  };
+
+  //bottom right
+  if (obj.x >= 600 && obj.y >= 600) {
+    obj.setAccelerationX(-slow_accel);
+    obj.setAccelerationY(-slow_accel);
+  };
+
+  //top left
+  if (obj.x <= 600 && obj.y <= 600) {
+    obj.setAccelerationX(high_accel);
+    obj.setAccelerationY(slow_accel);
+  };
+  //top right
+  if (obj.x >= 600 && obj.y <= 600) {
+    obj.setAccelerationX(slow_accel);
+    obj.setAccelerationY(high_accel);
+  };
+
+
+}
 
 function update ()
 {
+
+  stuff.children.entries.forEach( apply_current);
+
+  apply_current(player);
 
   
   if (cursors.left.isDown)
