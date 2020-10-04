@@ -20,9 +20,7 @@ var Title = new Phaser.Class({
 
       this.input.once('pointerdown', function () {
 
-          console.log('From Title to Main');
-
-          this.scene.start('main');
+          this.scene.start('separated');
 
       }, this);
   }
