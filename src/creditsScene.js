@@ -2,6 +2,8 @@ import Phaser from "phaser";
 import credits from "./assets/cutscenes/credits.png";
 
 
+import playagain from "./assets/buttons/playagain.png";
+
 
 export default class CreditScene extends Phaser.Scene {
 
@@ -11,6 +13,9 @@ export default class CreditScene extends Phaser.Scene {
 
     preload() {
         this.load.image("credits", credits);
+
+        this.load.image("playagain", playagain);
+
     }
 
     create () {
@@ -18,14 +23,17 @@ export default class CreditScene extends Phaser.Scene {
         //im.displayHeight=1200;
         //im.displayWidth=1200;
 
+        this.playAgain = this.add.image(1100, 950, 'playagain').setScale(0.5)
+        .setInteractive().on('pointerup', 
+            (pointer, localX, localY, event) => { 
+                this.continued = true;
+                this.scene.start('TitleScene');
+            } );
     };
 
     update () {
 
-        if (this.input.activePointer.isDown)
-        {
-            this.scene.start('TitleScene');
-        }
+
     }
 
 }

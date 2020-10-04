@@ -1,6 +1,8 @@
 import Phaser from "phaser";
 import title from "./assets/cutscenes/title.png";
 
+import touch from "./assets/buttons/touch.png";
+
 
 export default class TitleScene extends Phaser.Scene {
 
@@ -13,11 +15,21 @@ export default class TitleScene extends Phaser.Scene {
         this.continued = false;
 
         this.load.image("title", title);
+        this.load.image("touch", touch);
+        
     }
 
     create () {
         this.add.image(600,600, 'title');
         
+        this.touchNext = this.add.image(1100,950, 'touch').setScale(0.3)
+        .setInteractive().on('pointerup', 
+            (pointer, localX, localY, event) => { 
+                this.continued = true;
+                this.scene.start('SeperatedScene');
+            } );
+
+
         this.time.addEvent({ delay: 5000, callback: () => { 
             if (!this.continued) {
             this.scene.start('SeperatedScene'); 
@@ -31,11 +43,7 @@ export default class TitleScene extends Phaser.Scene {
 
     update () {
 
-        if (!this.continued && this.input.activePointer.isDown)
-        {
-            this.scene.start('SeperatedScene');
-            this.continued = true;
-        }
+
     }
 
 }

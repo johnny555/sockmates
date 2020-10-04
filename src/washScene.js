@@ -21,6 +21,8 @@ import usb from "./assets/sprites/usb.png";
 
 import bubbles from "./assets/sprites/bubbles.png";
 
+import arrow from "./assets/buttons/arrow.png";
+
 
 import washingloop from "./assets/audio/washingloop.mp3";
 
@@ -92,7 +94,7 @@ function formatTime(seconds){
 
 function add_score(player, goal) {
     score -= 0.02;
-    scoreText.setText('Hold on for: ' + (Math.ceil(score)) + ' seconds!');
+    scoreText.setText('Hover to unwind for: \n' + (Math.ceil(score)) + ' seconds!');
     goal.rotation-=0.01;
   
   }
@@ -224,6 +226,9 @@ export default class WashScene extends Phaser.Scene {
 
         this.load.image("bubbles", bubbles);
 
+        this.load.image("arrow", arrow);
+
+
         this.load.audio('washingloop', washingloop);
         this.sound.decodeAudio('key', washingloop);
     }
@@ -242,10 +247,11 @@ export default class WashScene extends Phaser.Scene {
         fg = this.add.image(600, 600, 'foreground');
         fg.displayWidth=1100;
         fg.displayHeight=1100;
+
         this.initialTime = 60;
 
 
-        scoreText = this.add.text(50,50, 'Hold onto your sockmate!', 
+        scoreText = this.add.text(50,50, 'Unwind your sockmate!', 
                 { fontSize: '32px', fill: '#000' });
 
         timerText = this.add.text(800, 50, 
@@ -289,6 +295,13 @@ export default class WashScene extends Phaser.Scene {
         // Frame ontop
         this.add.image(600,600, 'frame');
 
+
+        // left and right arrows.
+
+        var left = this.add.image(150,1050, 'arrow').setScale(0.5);
+        
+        var right = this.add.image(1050,1050, 'arrow').setScale(0.5);
+        right.flipX = true;
 
         // colliders
         this.physics.add.collider(player, boundary);

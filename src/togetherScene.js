@@ -1,6 +1,10 @@
 import Phaser from "phaser";
 import together from "./assets/cutscenes/together.png";
 
+import credits from "./assets/buttons/credits.png";
+import playagain from "./assets/buttons/playagain.png";
+
+
 
 export default class TogetherScene extends Phaser.Scene {
 
@@ -13,6 +17,9 @@ export default class TogetherScene extends Phaser.Scene {
         this.continued = false;
 
         this.load.image("together", together);
+        this.load.image("creditsButton", credits);
+        this.load.image("playagain", playagain);
+
     }
 
     create () {
@@ -27,17 +34,28 @@ export default class TogetherScene extends Phaser.Scene {
         }, 
             callbackScope: this, loop: false });
 
+        this.playAgain = this.add.image(1050, 300, 'playagain').setScale(0.5)
+        .setInteractive().on('pointerup', 
+            (pointer, localX, localY, event) => { 
+                this.continued = true;
+                this.scene.start('TitleScene');
+            } );
+;
+
+        this.creditsButton = this.add.image(1050,500, 'creditsButton').setScale(0.5)
+                        .setInteractive().on('pointerup', 
+                            (pointer, localX, localY, event) => { 
+                                this.continued = true;
+                                this.scene.start('CreditScene');
+                            } );
+    
        
 
     };
 
     update () {
 
-        if (!this.continued && this.input.activePointer.isDown)
-        {
-            this.scene.start('CreditScene');
-            this.continued = true;
-        }
+
     }
 
 }
