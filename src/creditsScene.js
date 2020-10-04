@@ -22,6 +22,10 @@ export default class CreditScene extends Phaser.Scene {
 
     update () {
 
+        if (this.input.activePointer.isDown)
+        {
+            this.scene.start('TitleScene');
+        }
     }
 
 }

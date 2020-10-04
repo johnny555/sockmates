@@ -18,13 +18,12 @@ const config = {
         debug: false
     }
   },
-  /*
   scale: {
-    mode: Phaser.Scale.RESIZE,
+    mode: Phaser.Scale.FIT,
     parent: 'phaser-example',
-    width: '100%',
-    height: '100%'
-  },*/
+    width: 1200,
+    height: 1200
+  },
   scene: [TitleScene, SeperatedScene, WashScene, CreditScene]
 };
 

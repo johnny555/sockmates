@@ -88,7 +88,6 @@ function formatTime(seconds){
 function add_score(player, goal) {
     score -= 0.02;
     scoreText.setText('hold on for : ' + (Math.ceil(score)) + ' seconds!');
-    //player.flipX = !player.flipX;
     goal.rotation-=0.01;
   
   }
@@ -325,29 +324,24 @@ export default class WashScene extends Phaser.Scene {
           apply_current(player);
           bg.rotation += 0.01;
           
-          if (cursors.left.isDown)
+          if (this.input.activePointer.isDown)
           {
-              player.setVelocityX(-160);
-        
-              player.anims.play('left', true);
-          }
-          else if (cursors.right.isDown)
-          {
+            if (this.input.activePointer.position.x <= 600)
+            {
+                player.setVelocityX(-160);
+                player.flipX = false;
+            } else 
+            {
               player.setVelocityX(160);
-        
-              player.anims.play('right', true);
+              player.flipX = true;
+            }
           }
-          else
-          {
-              player.setVelocityX(0);
+
         
-              player.anims.play('turn');
-          }
-        
-          if (cursors.up.isDown && player.body.touching.down)
+        /* if (cursors.up.isDown && player.body.touching.down)
           {
               player.setVelocityY(-330*2);
-          }
+          } */
         
         
     }
