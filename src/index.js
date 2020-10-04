@@ -37,6 +37,12 @@ const config = {
         debug: false
     }
   },
+  scale: {
+    mode: Phaser.Scale.RESIZE,
+    parent: 'phaser-example',
+    width: '100%',
+    height: '100%'
+},
   scene: {
     preload: preload,
     create: create,
@@ -197,9 +203,7 @@ function create() {
 function add_score(player, goal) {
   score -= 0.02;
   scoreText.setText('hold on for : ' + (Math.floor(score)) + ' seconds!');
-  if (score <= 0) {
-    gameOver = true;
-  };
+
 }
 
 function timerTick ()
@@ -251,19 +255,19 @@ function update ()
     gameOver = true;
   }
 
-  if (gameOver)
-  {
- 
-    if (score <= 0) {
+  if (score <= 0) {
   
-      scoreText.setText('You freed your sock mate! You WIN!');
-      if (!goal_destroyed) {      
-        goal.destroy();
-        goal_destroyed=true;
-        sockmate.enableBody(false, 600,600,true, true);    
-        sockmate.setPosition(600,600);
-      }
+    scoreText.setText('You freed your sock mate! You WIN!');
+    if (!goal_destroyed) {      
+      goal.destroy();
+      goal_destroyed=true;
+      sockmate.enableBody(false, 600,600,true, true);    
+      sockmate.setPosition(600,600);
     }
+  }
+
+  if (gameOver)
+  { 
     if (score > 0) {
       scoreText.setText('Your sock mate is forever trapped, \n You Lose!!');
     }
