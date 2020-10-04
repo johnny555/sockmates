@@ -79,22 +79,31 @@ function preload() {
 
 function create_stuff(stuff) {
 
-  /*stuff.create(400,200,"jeans").setScale(0.5);
-    
-  stuff.create(700,600,"bra").setScale(0.5);
-  stuff.create(400,800,"skirt").setScale(1);
-  stuff.create(800, 300,"underwear").setScale(0.5);
-  stuff.create(900,800,"usb").setScale(0.5);
-  stuff.create(700,100,"phone").setScale(0.5);
-  */
+  var global_scaling = 0.35;
+  var bounce_factor = 0.7;
 
-  var stuff_list = ['bra','glasses','gloves','invoice','jacket',
-                    'keys','papers','phone','scarf','shirt','skirt','underwear',
-                  'usb'];
-  stuff_list.forEach((name) => {
+  // name of item and a relative scaling factor.
+  var stuff_list =  [
+    ['bra', 1],
+    ['glasses', 0.5],
+    ['gloves',1],
+    ['invoice',0.5],
+    ['jacket', 1],
+    ['jeans', 1],
+    ['keys', 0.5],
+    ['papers', 0.5],
+    ['phone',1],
+    ['scarf',2],
+    ['shirt',1.5],
+    ['skirt',2],
+    ['underwear',1],
+    ['usb', 1]];
+
+  stuff_list.forEach((deets) => {
     var x_pos = Phaser.Math.Between(200,900);
     var y_pos = Phaser.Math.Between(200,900);
-    stuff.create(x_pos, y_pos, name).setScale(0.5);
+    stuff.create(x_pos, y_pos, deets[0]).setScale(global_scaling * deets[1])
+        .setBounce(bounce_factor, bounce_factor);
   });
 
   return stuff;
@@ -108,6 +117,10 @@ function create() {
     bg.displayHeight=1000;
 
     this.add.image(600,600, 'frame');
+
+    scoreText = this.add.text(100,100, 'score: 0', { fontSize: '32px', fill: '#FFF' });
+
+    var goal = this.physics.add.staticImage(600,600, 'sock').setScale(0.3).refreshBody();
     
 
     // Build the boundary
@@ -119,9 +132,13 @@ function create() {
 
  
     // add player
-    player = this.physics.add.sprite(600, 600, 'sock').setScale(0.5);
+    var x_pos = Phaser.Math.Between(200,900);
+    var y_pos = Phaser.Math.Between(200,900);
+    player = this.physics.add.sprite(x_pos, y_pos, 'sock').setScale(0.3).setBounce(0.7);
 
     cursors = this.input.keyboard.createCursorKeys();
+
+
 
 
     // colliders
@@ -133,56 +150,36 @@ function create() {
     
     // logic
 
-    this.physics.add.overlap(player, boundary, bounce, null, this);
-    this.physics.add.overlap(stuff, boundary, bounce, null, this);
-    //this.physics.add.overlap(stuff, player, bounce, null, this);
+    
+    this.physics.add.overlap(player, goal, add_score, null, this);
 
-    //this.physics.add.overlap(player, stuff, bounce, null, this);
+    this.physics.add.overlap(stuff, goal, minus_score, null, this);
     
 
 }
 
+function add_score(player, goal) {
 
-function bounce(obj1, obj2) {
-  spin(obj1, 1);
-  //spin(obj2);
-
-
+  score += 1;
+  scoreText.setText('score: ' + score);
+  if (score >= 100) {
+    gameOver = true;
+  };
 }
 
-// spin the object. 
-function spin(obj, multi=1) {
-  var slow_speed= multi* 160;
-  var high_speed= multi*320;
-
-  //bottom left
-  if (obj.x <= 600 && obj.y >= 600) {
-    obj.setVelocityX(-slow_speed);
-    obj.setVelocityY(-high_speed);
+function minus_score(stuff, goal) {
+  score -=0.1;
+  scoreText.setText('score: ' + score);
+  if (score <= -100) {
+    gameOver = true;
   };
 
-//bottom right
-if (obj.x >= 600 && obj.y >= 600) {
-  obj.setVelocityX(-slow_speed);
-  obj.setVelocityY(-slow_speed);
-};
-
-//top left
-if (obj.x <= 600 && obj.y <= 600) {
-  obj.setVelocityX(high_speed);
-  obj.setVelocityY(slow_speed);
-};
-//top right
-if (obj.x >= 600 && obj.y <= 600) {
-  obj.setVelocityX(slow_speed);
-  obj.setVelocityY(high_speed);
-};
-
 }
+
 
 function apply_current(obj) {
   var slow_accel = 100;
-  var high_accel = 1000;
+  var high_accel = 500;
   
   //bottom left
   if (obj.x <= 600 && obj.y >= 600) {
@@ -210,8 +207,23 @@ function apply_current(obj) {
 
 }
 
+
 function update ()
 {
+
+
+  if (gameOver)
+  {
+    if (score > 0) {
+  
+      scoreText.setText('You freed your sock mate! You WIN!');
+
+    }
+    if (score < 0) {
+      scoreText.setText('Your sock mate is forever trapped, You Lose!!');
+    }
+    return;
+  }
 
   stuff.children.entries.forEach( apply_current);
 
