@@ -48,10 +48,12 @@ const game = new Phaser.Game(config);
 
 var player;
 var stuff;
-var bombs;
 var boundary;
 var cursors;
-var score = 0;
+var score = 10;
+var timedEvent;
+var timerText;
+var washCycleOver = false;
 var gameOver = false;
 var scoreText;
 var goal;
@@ -113,17 +115,34 @@ function create_stuff(stuff) {
   return stuff;
 }
 
+function formatTime(seconds){
+  // Minutes
+  var minutes = Math.floor(seconds/60);
+  // Seconds
+  var partInSeconds = seconds%60;
+  // Adds left zeros to seconds
+  partInSeconds = partInSeconds.toString().padStart(2,'0');
+  // Returns formated time
+  return `${minutes}:${partInSeconds}`;
+}
+
 function create() {
     //  Create the background with frame overlay
 
     var bg = this.add.image(600,600, 'interior');
     bg.displayWidth=1000;
     bg.displayHeight=1000;
+    this.initialTime = 3;
 
     this.add.image(600,600, 'frame');
 
-    scoreText = this.add.text(50,50, 'Hold onto your sockmate!', { fontSize: '32px', fill: '#FFF' });
+    scoreText = this.add.text(50,50, 'Hold onto your sockmate!', 
+            { fontSize: '32px', fill: '#FFF' });
 
+    timerText = this.add.text(800, 50, 
+      'Wash ends: ' + formatTime(this.initialTime), 
+                { fontSize: '32px', fill: '#F00' });
+    
     goal = this.physics.add.staticImage(600,600, 'sock').setScale(0.3).refreshBody();
     sockmate = this.physics.add.sprite(200, 200, 'sock')
                     .setScale(0.3)
@@ -141,7 +160,7 @@ function create() {
  
     // add player
     var x_pos = Phaser.Math.Between(200,900);
-    var y_pos = Phaser.Math.Between(200,900);
+    var y_pos = Phaser.Math.Between(800,900);
     player = this.physics.add.sprite(x_pos, y_pos, 'sock').setScale(0.3).setBounce(0.7);
 
 
@@ -163,7 +182,7 @@ function create() {
     this.physics.add.collider(sockmate, player);
     this.physics.add.collider(sockmate, boundary);
 
-
+    timedEvent = this.time.addEvent({ delay: 1000, callback: timerTick, callbackScope: this, loop: true });
     
     // logic
 
@@ -176,15 +195,24 @@ function create() {
 }
 
 function add_score(player, goal) {
-  var time = 10;
-  score += 0.02;
-  scoreText.setText('hold on for : ' + (time - Math.floor(score)) + ' seconds!');
-  if (score >= time) {
+  score -= 0.02;
+  scoreText.setText('hold on for : ' + (Math.floor(score)) + ' seconds!');
+  if (score <= 0) {
     gameOver = true;
   };
 }
 
+function timerTick ()
+{
+  if (!washCycleOver) {
+    this.initialTime -= 1; // One second
+    timerText.setText('Wash ends: '  + formatTime(this.initialTime));
 
+    if (this.initialTime <= 0) {
+      washCycleOver = true;
+    }
+  }
+}
 
 function apply_current(obj) {
   var slow_accel = 100;
@@ -219,22 +247,25 @@ function apply_current(obj) {
 function update ()
 {
 
+  if (washCycleOver) {
+    gameOver = true;
+  }
 
   if (gameOver)
   {
-    if (!goal_destroyed) {      
-          goal.destroy();
-          goal_destroyed=true;
-          sockmate.enableBody(false, 600,600,true, true);    
-          sockmate.setPosition(600,600);
-    }
-    if (score > 0) {
+ 
+    if (score <= 0) {
   
       scoreText.setText('You freed your sock mate! You WIN!');
-
+      if (!goal_destroyed) {      
+        goal.destroy();
+        goal_destroyed=true;
+        sockmate.enableBody(false, 600,600,true, true);    
+        sockmate.setPosition(600,600);
+      }
     }
-    if (score < 0) {
-      scoreText.setText('Your sock mate is forever trapped, You Lose!!');
+    if (score > 0) {
+      scoreText.setText('Your sock mate is forever trapped, \n You Lose!!');
     }
     //return;
   }
@@ -267,6 +298,8 @@ function update ()
   {
       player.setVelocityY(-330*2);
   }
+
+
 }
 
 
