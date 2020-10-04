@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 
 import interior from "./assets/sprites/washinginterior.png";
+import foreground from "./assets/sprites/washingforeground.png";
 import frame from "./assets/sprites/washingframe.png";
 import sock from "./assets/sprites/sock.png";
 import bra from "./assets/sprites/bra.png";
@@ -33,6 +34,7 @@ var goal;
 var goal_destroyed = false;
 var sockmate;
 var bg;
+var fg;
 var nextSceneTimerStarted = false;
 
 
@@ -85,7 +87,9 @@ function formatTime(seconds){
 
 function add_score(player, goal) {
     score -= 0.02;
-    scoreText.setText('hold on for : ' + (Math.floor(score)) + ' seconds!');
+    scoreText.setText('hold on for : ' + (Math.ceil(score)) + ' seconds!');
+    //player.flipX = !player.flipX;
+    goal.rotation-=0.01;
   
   }
   
@@ -192,6 +196,8 @@ export default class WashScene extends Phaser.Scene {
     {
         this.load.image("interior", interior);
         this.load.image("frame", frame);
+        this.load.image("foreground", foreground);
+        
         this.load.image("sock", sock);
       
         this.load.image("bra", bra);
@@ -218,6 +224,9 @@ export default class WashScene extends Phaser.Scene {
         bg = this.add.image(600,600, 'interior');
         bg.displayWidth=1000;
         bg.displayHeight=1000;
+        fg = this.add.image(600, 600, 'foreground');
+        fg.displayWidth=1100;
+        fg.displayHeight=1100;
         this.initialTime = 60;
 
         this.add.image(600,600, 'frame');
