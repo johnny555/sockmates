@@ -59,7 +59,7 @@ var scoreText;
 var goal;
 var goal_destroyed = false;
 var sockmate;
-
+var bg;
 
 function preload() {
   this.load.image("interior", interior);
@@ -129,7 +129,7 @@ function formatTime(seconds){
 function create() {
     //  Create the background with frame overlay
 
-    var bg = this.add.image(600,600, 'interior');
+    bg = this.add.image(600,600, 'interior');
     bg.displayWidth=1000;
     bg.displayHeight=1000;
     this.initialTime = 60;
@@ -267,13 +267,13 @@ function update ()
     if (score > 0) {
       scoreText.setText('Your sock mate is forever trapped, \n You Lose!!');
     }
-    //return;
+    return;
   }
 
   stuff.children.entries.forEach( apply_current);
 
   apply_current(player);
-
+  bg.rotation += 0.01;
   
   if (cursors.left.isDown)
   {
