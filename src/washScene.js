@@ -285,7 +285,6 @@ export default class WashScene extends Phaser.Scene {
 
         this.physics.add.overlap(player, goal, add_score, null, this);
 
-        //this.physics.add.overlap(stuff, goal, minus_score, null, this);
 
 
     }
@@ -298,7 +297,7 @@ export default class WashScene extends Phaser.Scene {
         
           if (score <= 0) {
           
-            scoreText.setText('You freed your sock mate! You WIN!');
+            scoreText.setText('You freed your sock mate!');
             if (!goal_destroyed) {      
               goal.destroy();
               goal_destroyed=true;
@@ -334,6 +333,7 @@ export default class WashScene extends Phaser.Scene {
         
           apply_current(player);
           bg.rotation += 0.01;
+          fg.rotation += 0.01;
           
           if (this.input.activePointer.isDown)
           {
@@ -347,13 +347,6 @@ export default class WashScene extends Phaser.Scene {
               player.flipX = true;
             }
           }
-
-        
-        /* if (cursors.up.isDown && player.body.touching.down)
-          {
-              player.setVelocityY(-330*2);
-          } */
-        
         
     }
 
