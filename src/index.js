@@ -132,7 +132,7 @@ function create() {
     var bg = this.add.image(600,600, 'interior');
     bg.displayWidth=1000;
     bg.displayHeight=1000;
-    this.initialTime = 3;
+    this.initialTime = 60;
 
     this.add.image(600,600, 'frame');
 
