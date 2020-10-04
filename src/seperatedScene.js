@@ -11,6 +11,8 @@ export default class SeperatedScene extends Phaser.Scene {
     }
 
     preload() {
+        this.continued = false;
+
         this.load.image("seperated", seperated);
     }
 
@@ -19,7 +21,7 @@ export default class SeperatedScene extends Phaser.Scene {
         
         this.time.addEvent({ delay: 5000, callback: () => { 
             if (!this.continued) {
-                this.scene.start('WashScene'); 
+                this.scene.start('LostScene'); 
             };
         
         }, 
@@ -31,7 +33,7 @@ export default class SeperatedScene extends Phaser.Scene {
 
         if (!this.continued && this.input.activePointer.isDown)
         {
-            this.scene.start('WashScene');
+            this.scene.start('LostScene');
             this.continued = true;
         }
     }

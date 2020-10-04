@@ -10,6 +10,8 @@ export default class TitleScene extends Phaser.Scene {
     }
 
     preload() {
+        this.continued = false;
+
         this.load.image("title", title);
     }
 
