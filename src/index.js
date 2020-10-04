@@ -54,6 +54,10 @@ var cursors;
 var score = 0;
 var gameOver = false;
 var scoreText;
+var goal;
+var goal_destroyed = false;
+var sockmate;
+
 
 function preload() {
   this.load.image("interior", interior);
@@ -118,9 +122,13 @@ function create() {
 
     this.add.image(600,600, 'frame');
 
-    scoreText = this.add.text(100,100, 'score: 0', { fontSize: '32px', fill: '#FFF' });
+    scoreText = this.add.text(50,50, 'Hold onto your sockmate!', { fontSize: '32px', fill: '#FFF' });
 
-    var goal = this.physics.add.staticImage(600,600, 'sock').setScale(0.3).refreshBody();
+    goal = this.physics.add.staticImage(600,600, 'sock').setScale(0.3).refreshBody();
+    sockmate = this.physics.add.sprite(200, 200, 'sock')
+                    .setScale(0.3)
+                    .setBounce(0.7)
+                    .disableBody(true, true);
     
 
     // Build the boundary
@@ -136,6 +144,8 @@ function create() {
     var y_pos = Phaser.Math.Between(200,900);
     player = this.physics.add.sprite(x_pos, y_pos, 'sock').setScale(0.3).setBounce(0.7);
 
+
+
     cursors = this.input.keyboard.createCursorKeys();
 
 
@@ -147,34 +157,33 @@ function create() {
 
     this.physics.add.collider(player, stuff);
     this.physics.add.collider(stuff, stuff);
+
+    
+    this.physics.add.collider(sockmate, stuff);
+    this.physics.add.collider(sockmate, player);
+    this.physics.add.collider(sockmate, boundary);
+
+
     
     // logic
 
     
     this.physics.add.overlap(player, goal, add_score, null, this);
 
-    this.physics.add.overlap(stuff, goal, minus_score, null, this);
+    //this.physics.add.overlap(stuff, goal, minus_score, null, this);
     
 
 }
 
 function add_score(player, goal) {
-
-  score += 1;
-  scoreText.setText('score: ' + score);
-  if (score >= 100) {
+  var time = 10;
+  score += 0.02;
+  scoreText.setText('hold on for : ' + (time - Math.floor(score)) + ' seconds!');
+  if (score >= time) {
     gameOver = true;
   };
 }
 
-function minus_score(stuff, goal) {
-  score -=0.1;
-  scoreText.setText('score: ' + score);
-  if (score <= -100) {
-    gameOver = true;
-  };
-
-}
 
 
 function apply_current(obj) {
@@ -207,13 +216,18 @@ function apply_current(obj) {
 
 }
 
-
 function update ()
 {
 
 
   if (gameOver)
   {
+    if (!goal_destroyed) {      
+          goal.destroy();
+          goal_destroyed=true;
+          sockmate.enableBody(false, 600,600,true, true);    
+          sockmate.setPosition(600,600);
+    }
     if (score > 0) {
   
       scoreText.setText('You freed your sock mate! You WIN!');
@@ -222,7 +236,7 @@ function update ()
     if (score < 0) {
       scoreText.setText('Your sock mate is forever trapped, You Lose!!');
     }
-    return;
+    //return;
   }
 
   stuff.children.entries.forEach( apply_current);
