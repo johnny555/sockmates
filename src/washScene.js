@@ -19,6 +19,9 @@ import skirt from "./assets/sprites/skirt.png";
 import underwear from "./assets/sprites/underwear.png";
 import usb from "./assets/sprites/usb.png";
 
+import bubbles from "./assets/sprites/bubbles.png";
+
+
 import washingloop from "./assets/audio/washingloop.mp3";
 
 var player;
@@ -37,6 +40,7 @@ var sockmate;
 var bg;
 var fg;
 var nextSceneTimerStarted = false;
+var bubblesGroup;
 
 
 // Helper functions
@@ -88,7 +92,7 @@ function formatTime(seconds){
 
 function add_score(player, goal) {
     score -= 0.02;
-    scoreText.setText('hold on for : ' + (Math.ceil(score)) + ' seconds!');
+    scoreText.setText('Hold on for: ' + (Math.ceil(score)) + ' seconds!');
     goal.rotation-=0.01;
   
   }
@@ -218,6 +222,8 @@ export default class WashScene extends Phaser.Scene {
       
         this.load.image("jeans", jeans);
 
+        this.load.image("bubbles", bubbles);
+
         this.load.audio('washingloop', washingloop);
         this.sound.decodeAudio('key', washingloop);
     }
@@ -228,6 +234,8 @@ export default class WashScene extends Phaser.Scene {
         this.audio_list.washingloop = this.sound.add('washingloop', {loop: true});
         this.audio_list.washingloop.play();
 
+        this.cameras.main.setBackgroundColor('rgba(220, 220, 220, 1)');
+
         bg = this.add.image(600,600, 'interior');
         bg.displayWidth=1000;
         bg.displayHeight=1000;
@@ -236,14 +244,13 @@ export default class WashScene extends Phaser.Scene {
         fg.displayHeight=1100;
         this.initialTime = 60;
 
-        this.add.image(600,600, 'frame');
 
         scoreText = this.add.text(50,50, 'Hold onto your sockmate!', 
-                { fontSize: '32px', fill: '#FFF' });
+                { fontSize: '32px', fill: '#000' });
 
         timerText = this.add.text(800, 50, 
         'Wash ends: ' + formatTime(this.initialTime), 
-                    { fontSize: '32px', fill: '#F00' });
+                    { fontSize: '32px', fill: '#f00' });
 
         goal = this.physics.add.staticImage(600,600, 'sock').setScale(0.3).refreshBody();
         sockmate = this.physics.add.sprite(200, 200, 'sock')
@@ -255,6 +262,17 @@ export default class WashScene extends Phaser.Scene {
         // Build the boundary
         boundary = create_boundary(this.physics.add.staticGroup());
 
+        // Add some bubbles
+
+        bubblesGroup = this.physics.add.group();
+
+        [1,2,3,4,5,6].forEach((deets) => {
+            var x_pos = Phaser.Math.Between(200,900);
+            var y_pos = Phaser.Math.Between(200,900);
+            bubblesGroup.create(x_pos, y_pos, 'bubbles').setScale(0.3)
+                .setBounce(0.3, 0.3);
+          });
+        
 
         // Build the other stuff
         stuff = create_stuff(this.physics.add.group());
@@ -267,6 +285,11 @@ export default class WashScene extends Phaser.Scene {
 
         cursors = this.input.keyboard.createCursorKeys();
 
+
+        // Frame ontop
+        this.add.image(600,600, 'frame');
+
+
         // colliders
         this.physics.add.collider(player, boundary);
         this.physics.add.collider(stuff, boundary);
@@ -278,6 +301,10 @@ export default class WashScene extends Phaser.Scene {
         this.physics.add.collider(sockmate, stuff);
         this.physics.add.collider(sockmate, player);
         this.physics.add.collider(sockmate, boundary);
+
+        this.physics.add.collider(bubblesGroup, boundary);
+        this.physics.add.collider(bubblesGroup, bubblesGroup);
+        
 
         timedEvent = this.time.addEvent({ delay: 1000, callback: timerTick, callbackScope: this, loop: true });
 
@@ -330,8 +357,11 @@ export default class WashScene extends Phaser.Scene {
           }
         
           stuff.children.entries.forEach( apply_current);
+          bubblesGroup.children.entries.forEach( apply_current);
         
           apply_current(player);
+          
+
           bg.rotation += 0.01;
           fg.rotation += 0.01;
           
