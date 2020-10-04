@@ -16,7 +16,7 @@ export default class TitleScene extends Phaser.Scene {
     create () {
         this.add.image(600,600, 'title');
         
-        this.time.addEvent({ delay: 2000, callback: () => { this.scene.start('WashScene'); }, 
+        this.time.addEvent({ delay: 2000, callback: () => { this.scene.start('SeperatedScene'); }, 
             callbackScope: this, loop: false });
 
     };
