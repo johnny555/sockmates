@@ -260,10 +260,10 @@ export default class WashScene extends Phaser.Scene {
 
 
         // Add some helper text
-        this.leftText = this.add.text(10,1150, 'Hold to move left', 
+        this.leftText = this.add.text(10,1150, 'Tap and hold to move left.', 
         { fontSize: '32px', fill: '#000' });
         
-        this.rightText = this.add.text(850,1150, 'Hold to move right', 
+        this.rightText = this.add.text(680,1150, 'Tap and hold to move right.', 
         { fontSize: '32px', fill: '#000' });
 
         // Add some bubbles
