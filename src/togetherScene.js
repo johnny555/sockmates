@@ -25,7 +25,7 @@ export default class TogetherScene extends Phaser.Scene {
     create () {
         this.add.image(600,600, 'together');
         
-        this.time.addEvent({ delay: 5000, callback: () => { 
+        this.time.addEvent({ delay: 7000, callback: () => { 
             if (!this.continued) {
             this.scene.start('CreditScene'); 
             this.continued = true;

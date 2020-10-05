@@ -28,7 +28,7 @@ export default class LostScene extends Phaser.Scene {
                 this.scene.start('WashScene');
             } );
 
-        this.time.addEvent({ delay: 5000, callback: () => { 
+        this.time.addEvent({ delay: 7000, callback: () => { 
             if (!this.continued) {
             this.scene.start('WashScene'); 
             this.continued = true;

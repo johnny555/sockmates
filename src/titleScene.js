@@ -30,7 +30,7 @@ export default class TitleScene extends Phaser.Scene {
             } );
 
 
-        this.time.addEvent({ delay: 5000, callback: () => { 
+        this.time.addEvent({ delay: 7000, callback: () => { 
             if (!this.continued) {
             this.scene.start('SeperatedScene'); 
             this.continued = true;
