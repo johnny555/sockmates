@@ -283,8 +283,8 @@ export default class WashScene extends Phaser.Scene {
 
 
         // add player
-        var x_pos = Phaser.Math.Between(200,900);
-        var y_pos = Phaser.Math.Between(800,900);
+        var x_pos = Phaser.Math.Between(300,700);
+        var y_pos = Phaser.Math.Between(700,800);
         this.player = this.physics.add.sprite(x_pos, y_pos, 'sock').setScale(0.3).setBounce(0.7);
 
 
