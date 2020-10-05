@@ -223,7 +223,7 @@ export default class WashScene extends Phaser.Scene {
         this.goal_destroyed = false;
         this.washCycleOver = false;
         this.gameOver = false;
-        this.score = 10;
+        this.score = 7;
 
         //  Create the background with frame overlay
         this.audio_list.washingloop = this.sound.add('washingloop', {loop: true});
@@ -241,7 +241,7 @@ export default class WashScene extends Phaser.Scene {
         this.initialTime = 60;
 
 
-        this.scoreText = this.add.text(50,50, 'Unwind your sockmate!', 
+        this.scoreText = this.add.text(50,50, 'Move to sockmate!', 
                 { fontSize: '32px', fill: '#000' });
 
         this.timerText = this.add.text(800, 50, 
@@ -257,6 +257,14 @@ export default class WashScene extends Phaser.Scene {
 
         // Build the boundary
         this.boundary = create_boundary(this.physics.add.staticGroup());
+
+
+        // Add some helper text
+        this.leftText = this.add.text(10,1150, 'Hold to move left', 
+        { fontSize: '32px', fill: '#000' });
+        
+        this.rightText = this.add.text(850,1150, 'Hold to move right', 
+        { fontSize: '32px', fill: '#000' });
 
         // Add some bubbles
 
@@ -383,7 +391,7 @@ export default class WashScene extends Phaser.Scene {
 
     add_score(player, goal) {
         this.score -= 0.02;
-        this.scoreText.setText('Hover to unwind for: \n' + (Math.ceil(this.score)) + ' seconds!');
+        this.scoreText.setText('Move to your sockmate: \n' + (Math.ceil(this.score)) + ' seconds!');
         this.goal.rotation-=0.01;
       
       }

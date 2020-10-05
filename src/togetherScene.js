@@ -38,7 +38,7 @@ export default class TogetherScene extends Phaser.Scene {
         .setInteractive().on('pointerup', 
             (pointer, localX, localY, event) => { 
                 this.continued = true;
-                this.scene.start('TitleScene');
+                this.scene.start('WashScene');
             } );
 ;
 
